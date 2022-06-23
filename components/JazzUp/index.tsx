@@ -46,7 +46,7 @@ const JazzUp: FC<Props> = ({ className: _className }) => {
 	const [totalFee, setTotalFee] = useState('0') // 手续费
 	const [isClaiming, setIsClaiming] = useState(false) // 是否在等待claiming返回结果
 
-	const [style, setStyle]: any = useState({})
+	const [style, setStyle]: any = useState(style_pc)
 	useEffect(() => {
 		setStyle(isMobile ? style_mobile : style_pc)
 	}, [])

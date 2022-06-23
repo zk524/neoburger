@@ -23,6 +23,7 @@ import Alert from '@/components/Alert'
 import style_pc from './Home.pc.module.css'
 import style_mobile from './Home.mobile.module.css'
 import { isMobile } from 'react-device-detect'
+
 const Home: NextPage = () => {
 	const { t } = i18next
 
@@ -36,7 +37,7 @@ const Home: NextPage = () => {
 	const [totalSupply, setTotalSupply] = useState() // 所有人已转换的bNEO数量
 	const [operateType, setOperateType] = useState<'burgerStation' | 'jazzUp'>('burgerStation') // 操作界面切换
 	const [apr, setApr] = useState('-%') // 收益年度百分比
-	const [style, setStyle]: any = useState({})
+	const [style, setStyle]: any = useState(style_pc)
 	const operateRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {

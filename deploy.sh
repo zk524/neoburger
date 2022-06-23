@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 yarn export
 cd out
-# echo 'www.neoburger.io' >CNAME
+touch .nojekyll
+echo 'neoburger.io' >CNAME
 git init
 git add -A
 git commit -m 'deploy'

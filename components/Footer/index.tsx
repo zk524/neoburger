@@ -7,7 +7,7 @@ import style_mobile from './Footer.mobile.module.css'
 import { isMobile } from 'react-device-detect'
 const Footer: FC = () => {
 	const { t } = i18next
-	const [style, setStyle]: any = useState({})
+	const [style, setStyle]: any = useState(style_pc)
 	useEffect(() => {
 		setStyle(isMobile ? style_mobile : style_pc)
 	}, [])

@@ -25,7 +25,7 @@ const Header: FC<Props> = ({ setShowDrawer, language }) => {
 	const { t } = i18next
 	const router = useRouter()
 	const [color, setColor] = useState(router.pathname.includes('/home') ? 'white' : 'black')
-	const [style, setStyle]: any = useState({})
+	const [style, setStyle]: any = useState(style_pc)
 	const changeLanguage = (locale: string) => {
 		router.replace(URLGen(router.asPath.split('/').slice(-2)[0], locale))
 	}

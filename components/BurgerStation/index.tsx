@@ -46,7 +46,7 @@ const BurgerStation: FC<Props> = ({ className: _className }) => {
 	const [modalInfo, setModalInfo] = useState<ModalInfo>({ status: 'hide', hint: '' }) // 弹窗信息
 	const [isSwapping, setIsSwapping] = useState(false) // 是否在等待swap返回结果
 
-	const [style, setStyle]: any = useState({})
+	const [style, setStyle]: any = useState(style_pc)
 	useEffect(() => {
 		setStyle(isMobile ? style_mobile : style_pc)
 	}, [])
