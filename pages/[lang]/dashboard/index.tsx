@@ -101,7 +101,8 @@ const Dashboard: NextPage = () => {
 										NeonWallet.getScriptHashFromPublicKey(publicKey)
 									)
 									const balance = res1.stack[0].value
-									;(await preValue)[address] = {
+									const prefix = (await preValue)[address] ? '__' : ''
+									;(await preValue)[prefix + address] = {
 										scriptHash,
 										balance,
 									}
@@ -148,6 +149,18 @@ const Dashboard: NextPage = () => {
 							})
 						}
 						if (i === candidates.stack[0].value.length - 1) {
+							Object.keys(activeAgents).forEach((_addr) => {
+								const addr = _addr.slice(2)
+								if (_addr.slice(0, 2) === '__') {
+									dataList.push({
+										logo: committeeNameMap[addr].logo,
+										name: committeeNameMap[addr].name || '',
+										balance: activeAgents[_addr].balance,
+										totalVotes: vote,
+										scriptHash: activeAgents[_addr].scriptHash,
+									})
+								}
+							})
 							setAgentList(dataList)
 						}
 					})
