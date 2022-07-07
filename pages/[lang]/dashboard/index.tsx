@@ -138,13 +138,13 @@ const Dashboard: NextPage = () => {
 						const address = NeonWallet.getAddressFromScriptHash(
 							NeonWallet.getScriptHashFromPublicKey(publicKey)
 						)
-						const vote = v.value[1].value
 						if (activeAgents[address]) {
+							activeAgents[address].vote = v.value[1].value
 							dataList.push({
 								logo: committeeNameMap[address].logo,
 								name: committeeNameMap[address].name || '',
 								balance: activeAgents[address].balance,
-								totalVotes: vote,
+								totalVotes: activeAgents[address].vote,
 								scriptHash: activeAgents[address].scriptHash,
 							})
 						}
@@ -156,7 +156,7 @@ const Dashboard: NextPage = () => {
 										logo: committeeNameMap[addr].logo,
 										name: committeeNameMap[addr].name || '',
 										balance: activeAgents[_addr].balance,
-										totalVotes: vote,
+										totalVotes: activeAgents[addr].vote,
 										scriptHash: activeAgents[_addr].scriptHash,
 									})
 								}
