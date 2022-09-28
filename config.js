@@ -1,5 +1,5 @@
-const mode = 'dev'
-// const mode = 'github'
+// const mode = 'dev'
+const mode = 'github'
 
 let baseURL = '',
 	basePath = ''

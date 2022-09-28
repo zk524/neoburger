@@ -1,4 +1,4 @@
-import WcSdk, { WitnessScope } from "@cityofzion/wallet-connect-sdk-core";
+import WcSdk from "@cityofzion/wallet-connect-sdk-core";
 import SignClient from "@walletconnect/sign-client";
 import { store } from "@/store";
 import { batchUpdate } from "@/store/features/burger";
@@ -12,6 +12,13 @@ let wcInstance: any = {};
 const testnetKey = "neo3:testnet";
 const mainnetKey = "neo3:mainnet";
 const NEONWALLET_CONNECTED_KEY = "NEONWALLET_CONNECTED";
+enum WitnessScope {
+  None = 0,
+  CalledByEntry = 1,
+  CustomContracts = 16,
+  CustomGroups = 32,
+  Global = 128,
+}
 
 interface DapiError {
   type: string;

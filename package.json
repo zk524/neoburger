@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@cityofzion/neon-js": "5.0.0-next.11",
-    "@cityofzion/wallet-connect-sdk-core": "^2.0.7",
+    "@cityofzion/wallet-connect-sdk-core": "^2.1.0",
     "@neongd/json-rpc": "^0.0.9",
     "@neongd/neo-dapi": "^1.0.1",
     "@neongd/neo-provider": "^0.0.13",

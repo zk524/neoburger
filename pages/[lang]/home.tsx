@@ -57,7 +57,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     // 获取NEO、GAS分别对应的usdt价格
-    getQuote().then((res) => {
+    getQuote().then((res: any) => {
       res && dispatch(batchUpdate({ quoteArr: res }));
     });
   }, [dispatch]);
