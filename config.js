@@ -1,3 +1,4 @@
+// const mode = 'dev'
 const mode = 'github'
 
 let baseURL = '',

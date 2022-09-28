@@ -14,7 +14,7 @@ import '@/resources/i18n/init'
 import i18next from 'i18next'
 import { basePath } from '../config'
 
-function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: any) {
 	i18next.changeLanguage(pageProps.language)
 	const [showDrawer, setShowDrawer] = useState(false) // 是否拉开抽屉
 	useEffect(() => {
