@@ -65,14 +65,14 @@ const Header: FC<Props> = ({ setShowDrawer, language }) => {
 
 	return (
 		<header className={`${style.header} ${color === 'white' ? style.white : `${style.black} ${style.boxShadow}`}`}>
-			<div className={style.topTip}>
+			{/* <div className={style.topTip}>
 				<Image src={burgerWhite} alt='burgerWhite' />
 				<span className={style.airdropText}>NoBug Airdrop is available now ! </span>
 				<button className={style.claimBtn} onClick={() => router.replace(URLGen('airdrop', language))}>
 					<span>Claim </span>
 					<Image src={rightArrow} alt='rightArrow' />
 				</button>
-			</div>
+			</div> */}
 			<div className={style.headerContent}>
 				<div className={style.mNeoburgerLogo} onClick={() => router.replace(URLGen('home', language))}>
 					<Image src={color === 'white' ? neoBurgerLogoWhite : neoBurgerLogoBlack} alt='NeoBurger Logo' />
