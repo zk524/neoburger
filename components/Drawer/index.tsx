@@ -10,6 +10,7 @@ import { batchUpdate } from '@/store/features/burger'
 import { walletApi } from '@/resources/utils/api/walletApi'
 import closeDrawer from '@/resources/images/close-drawer.svg'
 import oneGate from '@/resources/images/onegate.svg'
+import neoLine from '@/resources/images/neo-line.svg'
 import copy from '@/resources/images/copy.svg'
 import style from './Drawer.module.css'
 
@@ -41,9 +42,9 @@ const Drawer: FC<Props> = ({ visible, hide, language }) => {
 	)
 
 	// 连接钱包
-	const connectWallet = () => {
-		dispatch(batchUpdate({ walletName: 'OneGate' }))
-		walletApi['OneGate']?.getAccount()
+	const connectWallet = (walletName: string) => {
+		dispatch(batchUpdate({ walletName }))
+		walletApi[walletName]?.getAccount()
 	}
 
 	const changeLanguage = (locale: string) => {
@@ -56,11 +57,11 @@ const Drawer: FC<Props> = ({ visible, hide, language }) => {
 				<div className={style.closeBtn} onClick={() => hide()}>
 					<Image src={closeDrawer} alt='close' />
 				</div>
-				{address && walletName === 'OneGate' ? (
+				{address ? (
 					<div className={style.connectInfo}>
 						<div className={style.connectHeader}>
-							<Image src={oneGate} alt='onegate' width={28} height={28} />
-							<span className={style.walletHeaderName}>OneGate</span>
+							<Image src={walletName == "OneGate" ? oneGate : neoLine} alt={walletName} width={28} height={28} />
+							<span className={style.walletHeaderName}>{walletName}</span>
 						</div>
 						<CopyToClipboard text={address}>
 							<div className={style.addressText}>
@@ -70,17 +71,25 @@ const Drawer: FC<Props> = ({ visible, hide, language }) => {
 								</span>
 							</div>
 						</CopyToClipboard>
-						<button className={style.disconnectBtn} onClick={() => walletApi['OneGate']?.disconnect()}>
+						<button className={style.disconnectBtn} onClick={() => walletApi[walletName]?.disconnect()}>
 							Disconnect
 						</button>
 					</div>
 				) : (
-					<button className={style.connectBtn} onClick={() => connectWallet()}>
-						<span>{t('connectWallet')}</span>
-						<span>
-							<Image src={oneGate} alt='onegate' width={32} height={32} />
-						</span>
-					</button>
+					<div>
+						<button className={style.connectBtn} style={{ width: "100%", marginBottom: "12px" }} onClick={() => connectWallet("OneGate")}>
+							<span>{t('connectWallet')}</span>
+							<span>
+								<Image src={oneGate} alt='onegate' width={32} height={32} />
+							</span>
+						</button>
+						<button className={style.connectBtn} style={{ width: "100%" }} onClick={() => connectWallet("NeolineMobile")}>
+							<span>{t('connectWallet')}</span>
+							<span>
+								<Image src={neoLine} alt='neoline' width={32} height={32} />
+							</span>
+						</button>
+					</div>
 				)}
 
 				<a href='https://neoburger.github.io/' className={style.text}>

@@ -28,7 +28,11 @@ import style_pc from "./Home.pc.module.css";
 import style_mobile from "./Home.mobile.module.css";
 import { isMobile } from "react-device-detect";
 
-const Home: NextPage = () => {
+interface Props {
+  setShowDrawer: (show: boolean) => void
+}
+
+const Home: NextPage<Props> = ({ setShowDrawer }) => {
   const { t } = i18next;
 
   const router = useRouter();
@@ -158,17 +162,15 @@ const Home: NextPage = () => {
         <div className={style.operateWrap} ref={operateRef}>
           <div className={style.switchBtnWrap}>
             <div
-              className={`${style.switchBtn} ${
-                operateType === "burgerStation" && style.switchBtnSelected
-              }`}
+              className={`${style.switchBtn} ${operateType === "burgerStation" && style.switchBtnSelected
+                }`}
               onClick={() => setOperateType("burgerStation")}
             >
               {t("burgerStation")}
             </div>
             <div
-              className={`${style.switchBtn} ${
-                operateType === "jazzUp" && style.switchBtnSelected
-              }`}
+              className={`${style.switchBtn} ${operateType === "jazzUp" && style.switchBtnSelected
+                }`}
               onClick={() => setOperateType("jazzUp")}
             >
               {t("jazzUp")}
@@ -178,9 +180,11 @@ const Home: NextPage = () => {
             className={
               operateType !== "burgerStation" ? style.hideInMobile : ""
             }
+            setShowDrawer={setShowDrawer}
           />
           <JazzUp
             className={operateType !== "jazzUp" ? style.hideInMobile : ""}
+            setShowDrawer={setShowDrawer}
           />
         </div>
         <section className={style.section}>

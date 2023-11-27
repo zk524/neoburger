@@ -1,21 +1,18 @@
 import _ from 'lodash-es'
 import delay from 'delay'
-import { NeoDapi } from '@neongd/neo-dapi'
 import constants from '../../constants'
 import { wallet } from '@cityofzion/neon-js'
 import { store } from '@/store'
 import { batchUpdate } from '@/store/features/burger'
+import { NeoDapi } from '@neongd/neo-dapi'
 import BigNumber from 'bignumber.js'
+
+let neoline: any // dapi句柄
 
 interface AccountInfo {
 	publicKey: string
 	address: string
 	label?: string
-}
-
-interface Network {
-	networks: string[]
-	defaultNetwork: string
 }
 
 interface DapiError {
@@ -29,63 +26,63 @@ interface BalanceResponse {
 	amount: string
 }
 
+
 interface TransferResponse {
 	txid: string
 	nodeURL?: string
 	signedTx?: string
 }
 
-let neo3Dapi: NeoDapi | null = null
+interface PublicKeyResponse {
+	address: string
+	publicKey: string
+}
+
+interface AccountInfo {
+	address: string
+	label?: string
+}
+
+interface Network {
+	networks: string[]
+	chainId: number
+	defaultNetwork: string
+}
 
 // 钱包初始化
 const initDapi = () => {
-	if (window.OneGate) {
-		neo3Dapi = new NeoDapi(window.OneGate)
+	const neo = (window as any)?.NeoLineMobile
+	if (neo) {
+		neoline = new NeoDapi(neo)
 		getAccount()
 		try {
-			window.OneGate.on('disconnect', () => {
+			neo.on('disconnect', () => {
 				disconnect()
 			})
 		} catch { }
 	}
 }
 
-// 获取当前网络
-function getNetwork(shouldUpdate?: boolean) {
-	return neo3Dapi
-		?.getNetworks()
-		.then((result: Network) => {
-			shouldUpdate && store.dispatch(batchUpdate({ network: result.defaultNetwork }))
-			return result.defaultNetwork
-		})
-		.catch((error: DapiError) => {
-			convertWalletError(error)
-			return ''
-		})
-}
-
 // 获取账户（唤起钱包）
 function getAccount() {
-	try {
-		neo3Dapi
-			?.getAccount()
-			.then((account: AccountInfo) => {
-				getNetwork(true)
-				store.dispatch(
-					batchUpdate({
-						walletName: 'OneGate',
-						address: account.address,
-					})
-				)
-			})
-			.catch((error: DapiError) => convertWalletError(error))
-	} catch { }
+	neoline
+		?.getAccount()
+		.then((account: AccountInfo) => {
+			getNetwork(true)
+			store.dispatch(
+				batchUpdate({
+					walletName: 'NeolineMobile',
+					address: account.address,
+				})
+			)
+		})
+		.catch((error: DapiError) => convertWalletError(error))
 }
 
 // 获取资产
 function getBalance() {
 	const address = store.getState().burger.address
-	neo3Dapi
+	neoline
 		?.getNep17Balances({ address })
 		.then((result: BalanceResponse[]) => {
 			const balance: { [asset: string]: string } = {}
@@ -99,21 +96,35 @@ function getBalance() {
 		.catch((error: DapiError) => convertWalletError(error))
 }
 
+// 获取当前网络
+function getNetwork(shouldUpdate?: boolean) {
+	return neoline
+		?.getNetworks()
+		.then((result: Network) => {
+			shouldUpdate && store.dispatch(batchUpdate({ network: result.defaultNetwork }))
+			return result.defaultNetwork
+		})
+		.catch((error: DapiError) => {
+			convertWalletError(error)
+			return ''
+		})
+}
+
 // 转换
 async function transfer(scriptHash: string, amount: string) {
 	const address = store.getState().burger.address
-	return neo3Dapi
+	return neoline
 		?.invoke({
 			scriptHash,
 			operation: 'transfer',
 			args: [
 				{
-					type: 'Hash160',
-					value: `0x${wallet.getScriptHashFromAddress(address)}`,
+					type: 'Address',
+					value: address,
 				},
 				{
-					type: 'Hash160',
-					value: `0x${wallet.getScriptHashFromAddress(constants.TOADDRESS)}`,
+					type: 'Address',
+					value: constants.TOADDRESS,
 				},
 				{
 					type: 'Integer',
@@ -124,10 +135,12 @@ async function transfer(scriptHash: string, amount: string) {
 					value: null,
 				},
 			],
+			fee: '0',
+			broadcastOverride: false,
 			signers: [
 				{
 					account: `0x${wallet.getScriptHashFromAddress(address)}`,
-					scopes: 'CalledByEntry',
+					scopes: 1,
 				},
 			],
 		})
@@ -155,7 +168,7 @@ async function transfer(scriptHash: string, amount: string) {
 
 // 领取NoBug
 const claimNoBug = (scripthash: string, amount: string, nonce: string, proof: string[]) => {
-	return neo3Dapi
+	return neoline
 		?.invoke({
 			scriptHash: constants.NOBUG,
 			operation: 'claim',
@@ -179,10 +192,12 @@ const claimNoBug = (scripthash: string, amount: string, nonce: string, proof: st
 					}),
 				},
 			],
+			fee: '0',
+			broadcastOverride: false,
 			signers: [
 				{
 					account: scripthash,
-					scopes: 'CalledByEntry',
+					scopes: 1,
 				},
 			],
 		})
@@ -213,7 +228,7 @@ async function getApplicationLog(txid: string) {
 	let status = ''
 	let retryCount = 0
 	while (true) {
-		await neo3Dapi
+		await neoline
 			?.getApplicationLog({
 				txid,
 			})
@@ -240,10 +255,10 @@ async function getApplicationLog(txid: string) {
 
 // 获取公钥
 function getPublicKey() {
-	return neo3Dapi
+	return neoline
 		?.getAccount()
 		.then((account: AccountInfo) => {
-			return account?.publicKey || ''
+			return account?.publicKey?.slice(12, -1) || ''
 		})
 		.catch((error: DapiError) => {
 			convertWalletError(error)
@@ -302,7 +317,7 @@ const newProposal = (
 	args: any[]
 ) => {
 	const addressHash = `0x${wallet.getScriptHashFromAddress(address)}`
-	return neo3Dapi
+	return neoline
 		?.invoke({
 			scriptHash: constants.BURGERGOV,
 			operation: 'newProposal',
@@ -336,10 +351,12 @@ const newProposal = (
 					value: args,
 				},
 			],
+			fee: '0',
+			broadcastOverride: false,
 			signers: [
 				{
 					account: addressHash,
-					scopes: 'CalledByEntry',
+					scopes: 1,
 				},
 			],
 		})
@@ -368,7 +385,7 @@ const newProposal = (
 // 投票
 const vote = (address: string, id: string, forOrAgainst: boolean, unvote: boolean) => {
 	const addressHash = `0x${wallet.getScriptHashFromAddress(address)}`
-	return neo3Dapi
+	return neoline
 		?.invoke({
 			scriptHash: constants.BURGERGOV,
 			operation: 'vote',
@@ -390,10 +407,12 @@ const vote = (address: string, id: string, forOrAgainst: boolean, unvote: boolea
 					value: unvote,
 				},
 			],
+			fee: '0',
+			broadcastOverride: false,
 			signers: [
 				{
 					account: addressHash,
-					scopes: 'CalledByEntry',
+					scopes: 1,
 				},
 			],
 		})

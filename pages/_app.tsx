@@ -36,7 +36,7 @@ function App({ Component, pageProps }: any) {
 			<Provider store={store}>
 				{/* <ErrorHandlder /> */}
 				<Header setShowDrawer={setShowDrawer} {...pageProps} />
-				<Component {...pageProps} />
+				<Component {...pageProps} setShowDrawer={setShowDrawer} />
 				<Footer />
 				<Drawer visible={showDrawer} hide={() => setShowDrawer(false)} {...pageProps} />
 			</Provider>

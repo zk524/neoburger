@@ -1,5 +1,6 @@
 interface WalletApi {
     Neoline: typeof import('./neolineApi') | null,
+    NeolineMobile: typeof import('./neolineMobileApi') | null,
     O3: typeof import('./o3Api') | null,
     OneGate: typeof import('./onegateApi') | null,
     Neon: typeof import('./neonApi') | null,
@@ -7,6 +8,7 @@ interface WalletApi {
 
 let walletApi: WalletApi = {
     Neoline: null,
+    NeolineMobile: null,
     O3: null,
     OneGate: null,
     Neon: null
@@ -16,6 +18,10 @@ let walletApi: WalletApi = {
 const initWalletApi = async () => {
     import('./neolineApi').then((res) => {
         walletApi.Neoline = res;
+        res.initDapi();
+    });
+    import('./neolineMobileApi').then((res) => {
+        walletApi.NeolineMobile = res;
         res.initDapi();
     });
     import('./o3Api').then((res) => {

@@ -21,6 +21,7 @@ import { isMobile } from 'react-device-detect'
 
 interface Props {
 	className: string
+	setShowDrawer: (show: boolean) => void
 }
 
 interface ModalInfo {
@@ -29,7 +30,7 @@ interface ModalInfo {
 	jumpUrl?: string
 }
 
-const JazzUp: FC<Props> = ({ className: _className }) => {
+const JazzUp: FC<Props> = ({ className: _className, setShowDrawer }) => {
 	const { t: _t } = i18next
 	const t = useCallback((s: any) => _t(s, { ns: 'jazzUp' }), [_t])
 	const router = useRouter()
@@ -120,10 +121,10 @@ const JazzUp: FC<Props> = ({ className: _className }) => {
 	}
 
 	// 移动端连接钱包
-	const connectWalletInMobile = useCallback(() => {
-		dispatch(batchUpdate({ walletName: 'OneGate' }))
-		walletApi['OneGate']?.getAccount()
-	}, [dispatch])
+	// const connectWalletInMobile = useCallback(() => {
+	// 	dispatch(batchUpdate({ walletName: 'OneGate' }))
+	// 	walletApi['OneGate']?.getAccount()
+	// }, [dispatch])
 
 	// claim按钮是否禁用
 	const claimBtnDisabled = useMemo(() => {
@@ -217,7 +218,7 @@ const JazzUp: FC<Props> = ({ className: _className }) => {
 			<button
 				className={`${style.footerBtn} ${claimBtnDisabled && style.disabledBtn} ${style.hideInPC}`}
 				disabled={claimBtnDisabled}
-				onClick={() => (address ? claim() : connectWalletInMobile())}
+				onClick={() => (address ? claim() : setShowDrawer(true))}
 			>
 				{btnText}
 			</button>
