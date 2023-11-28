@@ -119,12 +119,12 @@ async function transfer(scriptHash: string, amount: string) {
 			operation: 'transfer',
 			args: [
 				{
-					type: 'Address',
-					value: address,
+					type: 'Hash160',
+					value: `0x${wallet.getScriptHashFromAddress(address)}`,
 				},
 				{
-					type: 'Address',
-					value: constants.TOADDRESS,
+					type: 'Hash160',
+					value: `0x${wallet.getScriptHashFromAddress(constants.TOADDRESS)}`,
 				},
 				{
 					type: 'Integer',
@@ -135,12 +135,10 @@ async function transfer(scriptHash: string, amount: string) {
 					value: null,
 				},
 			],
-			fee: '0',
-			broadcastOverride: false,
 			signers: [
 				{
 					account: `0x${wallet.getScriptHashFromAddress(address)}`,
-					scopes: 1,
+					scopes: 'CalledByEntry',
 				},
 			],
 		})
